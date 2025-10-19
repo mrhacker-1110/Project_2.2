@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tic Tac Toe</title>
+    <style>
+        body { font-family: Arial; text-align: center; background:#f0f0f0;}
+        table { margin:auto; border-collapse: collapse; }
+        td, th { border:1px solid #333; padding:10px; }
+        a.button { padding:10px 20px; background:#4CAF50;color:white;text-decoration:none;border-radius:5px;}
+    </style>
+</head>
+<body>
+    <h1>Game List</h1>
+    <a href="{% url 'new_game' %}" class="button">New Game</a>
+    <table>
+        <tr><th>Player X</th><th>Player O</th><th>Status</th><th>Action</th></tr>
+        {% for game in games %}
+        <tr>
+            <td>{{ game.player_x }}</td>
+            <td>{{ game.player_o }}</td>
+            <td>
+                {% if game.winner %}
+                    {% if game.winner == "D" %}Draw{% else %}{{ game.winner }} wins{% endif %}
+                {% else %}
+                    In progress ({{ game.current_turn }}'s turn)
+                {% endif %}
+            </td>
+            <td><a href="{% url 'play_game' game.id %}">Play</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No games yet.</td></tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
