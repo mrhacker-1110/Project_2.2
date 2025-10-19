@@ -1,0 +1,40 @@
+<h1>{{ game.player_x }} vs {{ game.player_o }}</h1>
+
+<div>
+    {% if game.winner %}
+        {% if game.winner == "D" %}⚖️ Draw!{% else %}🏆 {{ game.winner }} wins!{% endif %}
+    {% else %}
+        Current turn: {{ game.current_turn }}
+    {% endif %}
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <table>
+        {% for row in rows %}
+        <tr>
+            {% for idx, cell in row %}
+            <td>
+                {% if cell %} {{ cell }} 
+                {% elif not game.winner %}
+                    <button name="cell" value="{{ idx }}">-</button>
+                {% endif %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</form>
+
+{% if game.winner %}
+    <div style="margin-top:20px;">
+        <form method="post" action="{% url 'new_game' %}" style="display:inline;">
+            {% csrf_token %}
+            <input type="hidden" name="player_x" value="{{ game.player_x.name }}">
+            <input type="hidden" name="player_o" value="{{ game.player_o.name }}">
+            <input type="hidden" name="vs_bot" value="{{ game.vs_bot }}">
+            <button type="submit">Play Again</button>
+        </form>
+        <a href="{% url 'new_game' %}" style="margin-left:10px;">New Game</a>
+    </div>
+{% endif %}
