@@ -1,23 +1,32 @@
 {% extends 'tictactoe/base.html' %}
 {% block title %}Игра{% endblock %}
 {% block content %}
-<h2>{{ game.player_x }} vs {{ game.player_o }}</h2>
+<h2>{{ game.player_x.name }} vs {{ game.player_o.name }}</h2>
 
 {% if game.winner %}
     <h3>
         {% if game.winner == "D" %}
             ⚖️ Ничья!
+        {% elif game.winner == "X" %}
+            🏆 Победитель: {{ game.player_x.name }}
         {% else %}
-            🏆 Победитель: {{ game.winner }}
+            🏆 Победитель: {{ game.player_o.name }}
         {% endif %}
     </h3>
 {% else %}
-    <h3>Ходит: {{ game.current_turn }}</h3>
+    <h3>Ходит: 
+        {% if game.current_turn == "X" %}
+            {{ game.player_x.name }}
+        {% else %}
+            {{ game.player_o.name }}
+        {% endif %}
+    </h3>
 {% endif %}
+
 
 <form method="post">
     {% csrf_token %}
-    <table>
+    <table style="margin:auto; border-collapse: collapse;">
         {% for row in rows %}
         <tr>
             {% for idx, cell in row %}
@@ -36,22 +45,36 @@
 
 {% if game.winner %}
     <br>
-    <a href="{% url 'new_game' %}"><button>Новая игра</button></a>
+    <a href="{% url 'new_game_with_players' game.id %}">
+        <button class="btn">Новая игра</button>
+    </a>
 {% endif %}
+
 {% endblock %}
+
 <style>
-    td button {
-        width: 60px;
-        height: 60px;
-        font-size: 22px;
-        background: rgba(255,255,255,0.2);
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        transition: background 0.3s, transform 0.2s;
-    }
-    td button:hover {
-        background: #4CAF50;
-        transform: scale(1.1);
-    }
+td button {
+    width: 60px;
+    height: 60px;
+    font-size: 22px;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    transition: background 0.3s, transform 0.2s;
+}
+td button:hover {
+    background: #4CAF50;
+    transform: scale(1.1);
+}
+.btn {
+    padding: 10px 20px;
+    margin: 5px;
+    background: #ff5722;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.btn:hover { background:#e64a19; }
 </style>

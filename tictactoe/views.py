@@ -4,6 +4,18 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from .models import Player, GameResult
 
+from django.shortcuts import redirect, get_object_or_404
+from .models import GameResult
+
+def new_game_with_players(request, game_id):
+    old_game = get_object_or_404(GameResult, id=game_id)
+    new_game = GameResult.objects.create(
+        player_x=old_game.player_x,
+        player_o=old_game.player_o,
+        vs_bot=old_game.vs_bot
+    )
+    return redirect('play_game', game_id=new_game.id)
+
 
 def index(request):
     games = GameResult.objects.all().order_by("-id")
@@ -97,3 +109,34 @@ def clear_all(request):
     GameResult.objects.all().delete()
     Player.objects.all().delete()
     return redirect('index')
+
+
+# !!!!
+def play_game2(request, game_id):
+    game = get_object_or_404(GameResult, id=game_id)
+    board = game.get_board()
+
+    # Обработка хода игрока
+    if request.method == "POST" and not game.winner:
+        cell_idx = request.POST.get("cell")
+        if cell_idx is not None:
+            idx = int(cell_idx)
+            if board[idx] == "" and game.current_turn in ["X","O"]:
+                board[idx] = game.current_turn
+                game.set_board(board)
+                game.winner = game.check_winner()
+                if not game.winner:
+                    game.current_turn = "O" if game.current_turn == "X" else "X"
+                game.save()
+                return redirect("play_game2", game_id=game.id)
+
+    # Формируем таблицу для шаблона
+    rows = []
+    for i in range(3):
+        row = []
+        for j in range(3):
+            idx = i*3 + j
+            row.append((idx, board[idx]))
+        rows.append(row)
+
+    return render(request, "tictactoe/play_game2.html", {"game": game, "rows": rows})

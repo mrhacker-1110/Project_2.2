@@ -1,97 +1,26 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Tic Tac Toe{% endblock %}</title>
     <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #2c3e50, #4ca1af);
-            margin: 0;
-            padding: 0;
-            color: #fff;
-        }
-        header {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            text-align: center;
-            font-size: 28px;
-            font-weight: bold;
-            text-shadow: 1px 1px 3px #000;
-        }
-        nav {
-            display: flex;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px;
-            backdrop-filter: blur(10px);
-        }
-        nav a {
-            color: #fff;
-            text-decoration: none;
-            padding: 12px 20px;
-            margin: 0 8px;
-            border-radius: 8px;
-            transition: background 0.3s, transform 0.2s;
-        }
-        nav a:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
-        }
-        main {
-            text-align: center;
-            padding: 20px;
-        }
-        table {
-            margin: 20px auto;
-            border-collapse: collapse;
-            background: rgba(255,255,255,0.15);
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
-        }
-        th, td {
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 10px 20px;
-            color: #fff;
-        }
-        th {
-            background: rgba(255,255,255,0.2);
-        }
-        button, .btn {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            margin: 5px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 15px;
-            transition: background 0.3s, transform 0.2s;
-        }
-        button:hover, .btn:hover {
-            background: #45a049;
-            transform: scale(1.05);
-        }
-        .danger {
-            background: #e74c3c;
-        }
-        .danger:hover {
-            background: #c0392b;
-        }
-        footer {
-            margin-top: 40px;
-            text-align: center;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.3);
-            font-size: 14px;
-        }
-        .winner {
-            color: #ffeb3b;
-            text-shadow: 0 0 10px #fff;
-            font-size: 24px;
-            font-weight: bold;
-        }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #2c3e50, #4ca1af); margin:0; padding:0; color:#fff; }
+        header { background: rgba(0,0,0,0.3); padding:15px; text-align:center; font-size:28px; font-weight:bold; text-shadow:1px 1px 3px #000; }
+        nav { display:flex; justify-content:center; background: rgba(255,255,255,0.1); padding:10px; backdrop-filter:blur(10px); }
+        nav a { color:#fff; text-decoration:none; padding:12px 20px; margin:0 8px; border-radius:8px; transition: background 0.3s, transform 0.2s; }
+        nav a:hover { background: rgba(255,255,255,0.2); transform:scale(1.1); }
+        main { text-align:center; padding:20px; }
+        table { margin:20px auto; border-collapse:collapse; background: rgba(255,255,255,0.15); border-radius:10px; overflow:hidden; box-shadow:0 0 10px rgba(0,0,0,0.3); }
+        th, td { border:1px solid rgba(255,255,255,0.2); padding:10px 20px; color:#fff; }
+        th { background: rgba(255,255,255,0.2); }
+        button, .btn { background:#4CAF50; color:white; border:none; padding:10px 15px; margin:5px; border-radius:6px; cursor:pointer; font-size:15px; transition: background 0.3s, transform 0.2s; }
+        button:hover, .btn:hover { background:#45a049; transform:scale(1.05); }
+        .danger { background:#e74c3c; }
+        .danger:hover { background:#c0392b; }
+        footer { margin-top:40px; text-align:center; padding:10px; background: rgba(0,0,0,0.3); font-size:14px; }
+        .winner { color:#ffeb3b; text-shadow:0 0 10px #fff; font-size:24px; font-weight:bold; }
+        #music-btn { position:fixed; top:15px; right:15px; z-index:999; }
     </style>
 </head>
 <body>
@@ -102,6 +31,56 @@
         <a href="{% url 'results' %}">📊 История</a>
         <a href="{% url 'clear_all' %}" class="btn danger">🧹 Очистить всё</a>
     </nav>
+
+    <!-- Аудио -->
+    <audio id="bg-music" loop>
+        <source src="{% static 'tictactoe/sounds/music.mp3' %}" type="audio/mpeg">
+    </audio>
+    <audio id="click-sound">
+        <source src="{% static 'tictactoe/sounds/musicc.mp3' %}" type="audio/mpeg">
+    </audio>
+    <audio id="win-sound">
+        <source src="{% static 'tictactoe/sounds/musiccc.mp3' %}" type="audio/mpeg">
+    </audio>
+
+    <!-- Кнопка музыки -->
+    <button id="music-btn" class="btn" onclick="toggleMusic()">⏯ Музыка</button>
+
+    <script>
+        const music = document.getElementById("bg-music");
+        const clickSound = document.getElementById("click-sound");
+        const winSound = document.getElementById("win-sound");
+
+        music.volume = 0.5;
+
+        // Включаем музыку если в localStorage указано
+        if(localStorage.getItem('musicPlaying') === 'true') {
+            music.play().catch(() => {});
+        }
+
+        function toggleMusic() {
+            if(music.paused) {
+                music.play();
+                localStorage.setItem('musicPlaying','true');
+            } else {
+                music.pause();
+                localStorage.setItem('musicPlaying','false');
+            }
+        }
+
+        // Звук на все кнопки
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                clickSound.currentTime = 0;
+                clickSound.play();
+            });
+        });
+
+        // Звук победы
+        {% if game.winner %}
+        winSound.play();
+        {% endif %}
+    </script>
 
     <main>
         {% block content %}{% endblock %}

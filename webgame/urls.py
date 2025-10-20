@@ -18,6 +18,12 @@ from django.contrib import admin
 from django.urls import path
 from tictactoe import views
 
+from django.urls import path
+from django.shortcuts import render
+
+def test_audio(request):
+    return render(request, 'tictactoe/play_game_test.html')
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
@@ -25,4 +31,7 @@ urlpatterns = [
     path('play/<int:game_id>/', views.play_game, name='play_game'),
     path('results/', views.results, name='results'),
     path('clear/', views.clear_all, name='clear_all'),
+    path('play2/<int:game_id>/', views.play_game2, name='play_game2'),
+    path('new_with/<int:game_id>/', views.new_game_with_players, name='new_game_with_players'),
+
 ]
