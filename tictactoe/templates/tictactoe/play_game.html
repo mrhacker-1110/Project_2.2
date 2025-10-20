@@ -1,12 +1,19 @@
-<h1>{{ game.player_x }} vs {{ game.player_o }}</h1>
+{% extends 'tictactoe/base.html' %}
+{% block title %}Игра{% endblock %}
+{% block content %}
+<h2>{{ game.player_x }} vs {{ game.player_o }}</h2>
 
-<div>
-    {% if game.winner %}
-        {% if game.winner == "D" %}⚖️ Draw!{% else %}🏆 {{ game.winner }} wins!{% endif %}
-    {% else %}
-        Current turn: {{ game.current_turn }}
-    {% endif %}
-</div>
+{% if game.winner %}
+    <h3>
+        {% if game.winner == "D" %}
+            ⚖️ Ничья!
+        {% else %}
+            🏆 Победитель: {{ game.winner }}
+        {% endif %}
+    </h3>
+{% else %}
+    <h3>Ходит: {{ game.current_turn }}</h3>
+{% endif %}
 
 <form method="post">
     {% csrf_token %}
@@ -14,8 +21,9 @@
         {% for row in rows %}
         <tr>
             {% for idx, cell in row %}
-            <td>
-                {% if cell %} {{ cell }} 
+            <td style="width:60px;height:60px;text-align:center;font-size:24px;">
+                {% if cell %}
+                    {{ cell }}
                 {% elif not game.winner %}
                     <button name="cell" value="{{ idx }}">-</button>
                 {% endif %}
@@ -27,14 +35,23 @@
 </form>
 
 {% if game.winner %}
-    <div style="margin-top:20px;">
-        <form method="post" action="{% url 'new_game' %}" style="display:inline;">
-            {% csrf_token %}
-            <input type="hidden" name="player_x" value="{{ game.player_x.name }}">
-            <input type="hidden" name="player_o" value="{{ game.player_o.name }}">
-            <input type="hidden" name="vs_bot" value="{{ game.vs_bot }}">
-            <button type="submit">Play Again</button>
-        </form>
-        <a href="{% url 'new_game' %}" style="margin-left:10px;">New Game</a>
-    </div>
+    <br>
+    <a href="{% url 'new_game' %}"><button>Новая игра</button></a>
 {% endif %}
+{% endblock %}
+<style>
+    td button {
+        width: 60px;
+        height: 60px;
+        font-size: 22px;
+        background: rgba(255,255,255,0.2);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        transition: background 0.3s, transform 0.2s;
+    }
+    td button:hover {
+        background: #4CAF50;
+        transform: scale(1.1);
+    }
+</style>

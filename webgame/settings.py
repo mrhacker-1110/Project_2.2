@@ -121,3 +121,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Настройки статических файлов
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+DEBUG = True
+# Для production-среды (если используешь сервер вроде Gunicorn)
+STATIC_ROOT = BASE_DIR / "staticfiles"  # Папка, куда собираются статические файлы

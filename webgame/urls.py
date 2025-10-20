@@ -23,4 +23,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('new/', views.new_game, name='new_game'),
     path('play/<int:game_id>/', views.play_game, name='play_game'),
+    path('results/', views.results, name='results'),
+    path('clear/', views.clear_all, name='clear_all'),
 ]

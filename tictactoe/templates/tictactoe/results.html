@@ -1,0 +1,18 @@
+{% extends 'tictactoe/base.html' %}
+{% block title %}Результаты{% endblock %}
+{% block content %}
+<h1>История игр</h1>
+
+<table>
+    <tr><th>Игрок X</th><th>Игрок O</th><th>Победитель</th></tr>
+    {% for g in games %}
+    <tr>
+        <td>{{ g.player_x }}</td>
+        <td>{{ g.player_o }}</td>
+        <td>
+            {% if g.winner == 'D' %}Ничья{% else %}{{ g.winner }}{% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

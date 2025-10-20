@@ -1,8 +1,13 @@
-<h1>New Game</h1>
+{% extends 'tictactoe/base.html' %}
+{% block title %}Новая игра{% endblock %}
+{% block content %}
+<h2>Создать новую игру</h2>
+
 <form method="post">
     {% csrf_token %}
-    <input type="text" name="player_x" placeholder="Player X" required><br>
-    <input type="text" name="player_o" placeholder="Player O"><br>
-    <label><input type="checkbox" name="vs_bot"> Play vs Bot</label><br>
-    <button type="submit">Start Game</button>
+    <input type="text" name="player_x" placeholder="Игрок X" required><br><br>
+    <input type="text" name="player_o" placeholder="Игрок O"><br><br>
+    <label><input type="checkbox" name="vs_bot"> Играть против бота</label><br><br>
+    <button type="submit">Начать</button>
 </form>
+{% endblock %}
